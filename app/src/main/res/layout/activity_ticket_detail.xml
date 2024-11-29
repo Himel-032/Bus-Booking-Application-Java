@@ -200,6 +200,21 @@
                             android:text="-"
                             android:textColor="@color/black"
                             android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Departure"
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:id="@+id/departureTxt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -233,6 +248,21 @@
 
                         <TextView
                             android:id="@+id/timeTxt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="-"
+                            android:textColor="@color/black"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:text="Ending"
+                            android:textColor="@color/black" />
+
+                        <TextView
+                            android:id="@+id/endingTxt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="-"
@@ -337,6 +367,33 @@
                         android:layout_height="95dp"
 
                         app:srcCompat="@drawable/qr_code_new" />
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:layout_margin="16dp">
+
+                    <TextView
+                        android:id="@+id/textView29"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="18dp"
+                        android:textColor="@color/black"
+                        android:text="Bus ID: " />
+
+                    <TextView
+                        android:id="@+id/idTxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:text="-"
+                        />
                 </LinearLayout>
 
                 <ImageView

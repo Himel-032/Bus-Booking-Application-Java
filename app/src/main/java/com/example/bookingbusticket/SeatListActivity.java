@@ -19,6 +19,7 @@ import com.example.bookingbusticket.Adapter.SeatAdapter;
 import com.example.bookingbusticket.Model.Seat;
 import com.example.bookingbusticket.Model.Trip;
 import com.example.bookingbusticket.databinding.ActivitySeatListBinding;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -116,57 +117,73 @@ public class SeatListActivity extends BaseActivity {
           binding.seatRecyclerview.setNestedScrollingEnabled(false);
         }
         */
-private void initSeatList() {
 
 
-    GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 4); // 4 columns
-    binding.seatRecyclerview.setLayoutManager(gridLayoutManager);
+    private void initSeatList() {
+        String busName = trip.getBusCompanyName(); // Get bus name from trip
+        String date = trip.getDate(); // Get selected date from trip
+        String busVariation = busName + " " + trip.getClassSeat();
+        int id= trip.getID();
+        String busID=String.valueOf(id);
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("BookedSeats")
+                .child(busID)
+                .child(date);
 
-    // List to store seat objects
-    List<Seat> seatList = new ArrayList<>();
-    int totalSeats = 40; // Total seats (10 rows * 4 seats per row)
-    int seatsPerRow = 4; // 4 seats per row
+        // Fetch booked seats from Firebase
+        databaseReference.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                List<String> bookedSeats = new ArrayList<>();
+                if (task.getResult().exists()) {
+                    for (DataSnapshot snapshot : task.getResult().getChildren()) {
+                        bookedSeats.add(snapshot.getKey()); // Add booked seat names
+                    }
+                }
 
-    // Map for column letters
-    Map<Integer, String> seatAlphabetMap = new HashMap<>();
-    seatAlphabetMap.put(0, "A");
-    seatAlphabetMap.put(1, "B");
-    seatAlphabetMap.put(2, "C");
-    seatAlphabetMap.put(3, "D");
+                // Prepare seat list
+                List<Seat> seatList = new ArrayList<>();
+                int totalSeats = trip.getTotalSeats(); // Example: 10 rows * 4 seats per row
+                int seatsPerRow = 4;
 
-    // Generate seat list
-    for (int i = 0; i < totalSeats; i++) {
-        int row = (i / seatsPerRow) + 1; // Row number (1-based)
-        int column = i % seatsPerRow; // Column index
-        String seatName = row + seatAlphabetMap.get(column); // e.g., 1A, 1B, etc.
+                // Map for column letters
+                Map<Integer, String> seatAlphabetMap = new HashMap<>();
+                seatAlphabetMap.put(0, "A");
+                seatAlphabetMap.put(1, "B");
+                seatAlphabetMap.put(2, "C");
+                seatAlphabetMap.put(3, "D");
 
-        // Determine if seat is reserved
-        Seat.SeatStatus seatStatus = trip.getReservedSeats().contains(seatName)
-                ? Seat.SeatStatus.UNAVAILABLE
-                : Seat.SeatStatus.AVAILABLE;
+                for (int i = 0; i < totalSeats; i++) {
+                    int row = (i / seatsPerRow) + 1;
+                    int column = i % seatsPerRow;
+                    String seatName = row + seatAlphabetMap.get(column);
 
-        // Add seat to the list
-        seatList.add(new Seat(seatStatus, seatName));
+                    // Determine seat status
+                    Seat.SeatStatus seatStatus = bookedSeats.contains(seatName)
+                            ? Seat.SeatStatus.UNAVAILABLE
+                            : Seat.SeatStatus.AVAILABLE;
+
+                    // Add seat to the list
+                    seatList.add(new Seat(seatStatus, seatName));
+                }
+
+                // Set up adapter
+                SeatAdapter seatAdapter = new SeatAdapter(seatList, this, (selectedName, num) -> {
+                    binding.numberSelectedTxt.setText(num + " Seat Selected");
+                    binding.nameSeatSelectedTxt.setText(selectedName);
+
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    price = Double.valueOf(df.format(num * trip.getPrice()));
+                    this.num = num;
+
+                    binding.priceTxt.setText("BDT " + price);
+                });
+
+                binding.seatRecyclerview.setAdapter(seatAdapter);
+                binding.seatRecyclerview.setLayoutManager(new GridLayoutManager(this, seatsPerRow));
+            } else {
+                Toast.makeText(this, "Failed to load seats", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
-
-
-
-
-    // Set up adapter
-    SeatAdapter seatAdapter = new SeatAdapter(seatList, this, (selectedName, num) -> {
-        binding.numberSelectedTxt.setText(num + " Seat Selected");
-        binding.nameSeatSelectedTxt.setText(selectedName);
-
-        DecimalFormat df = new DecimalFormat("#.##");
-        price = Double.valueOf(df.format(num * trip.getPrice()));
-        this.num = num;
-
-        binding.priceTxt.setText("BDT " + price);
-    });
-
-    binding.seatRecyclerview.setAdapter(seatAdapter);
-    binding.seatRecyclerview.setNestedScrollingEnabled(false);
-}
 
 
 

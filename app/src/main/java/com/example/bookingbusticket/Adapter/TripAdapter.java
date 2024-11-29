@@ -65,6 +65,9 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
         holder.binding.classTxt.setText(trip.getClassSeat());
         holder.binding.priceTxt.setText("BDT "+trip.getPrice().toString());
         holder.binding.travleTimeTxt.setText(trip.getTravelTime());
+        holder.binding.idText.setText(String.valueOf(trip.getID()));
+        holder.binding.depurturePlaceTxt.setText(trip.getStart());
+        holder.binding.endingPlaceTxt.setText(trip.getEnd());
 
 
         holder.itemView.setOnClickListener(v -> {

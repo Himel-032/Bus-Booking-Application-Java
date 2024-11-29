@@ -28,10 +28,17 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends BaseActivity {
 
@@ -43,6 +50,13 @@ public class MainActivity extends BaseActivity {
     Button searchButton;
     ChipNavigationBar navigationView;
     DatabaseReference databaseReference;
+    DatabaseReference databaseReference2;
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        deletePastDates();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +87,7 @@ public class MainActivity extends BaseActivity {
         }
 
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.locations_array, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.locations_array, R.layout.spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         fromSpinner.setAdapter(adapter);
         toSpinner.setAdapter(adapter);
@@ -173,5 +187,51 @@ public class MainActivity extends BaseActivity {
                 year,month,day
         );
         datePickerDialog.show();
+    }
+    private void deletePastDates() {
+        // Get current date
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
+        String currentDate = dateFormat.format(calendar.getTime());
+
+        // Reference to the BookedSeats node
+        databaseReference2 = FirebaseDatabase.getInstance().getReference("BookedSeats");
+
+        // Query the database for all bus variations (bus IDs and dates)
+        databaseReference2.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Iterate over all bus names
+                for (DataSnapshot busSnapshot : dataSnapshot.getChildren()) {
+                    // Iterate over all dates for the bus
+                    for (DataSnapshot dateSnapshot : busSnapshot.getChildren()) {
+                        String date = dateSnapshot.getKey();  // Date in the format "dd MMM, yyyy"
+
+                        // Compare dates
+                        if (isPastDate(date, currentDate)) {
+                            // Remove the past date from the database
+                            dateSnapshot.getRef().removeValue();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle errors if any
+                Toast.makeText(MainActivity.this, "Error deleting past dates", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    private boolean isPastDate(String dateStr, String currentDate) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy", Locale.getDefault());
+            Date date = dateFormat.parse(dateStr);
+            Date current = dateFormat.parse(currentDate);
+            return date != null && date.before(current);  // Return true if the date is before current date
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

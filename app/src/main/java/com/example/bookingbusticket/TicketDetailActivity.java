@@ -10,12 +10,19 @@ import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bookingbusticket.Model.Trip;
 import com.example.bookingbusticket.databinding.ActivityTicketDetailBinding;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.sslwireless.sslcommerzlibrary.model.initializer.SSLCAdditionalInitializer;
 import com.sslwireless.sslcommerzlibrary.model.initializer.SSLCCustomerInfoInitializer;
 import com.sslwireless.sslcommerzlibrary.model.initializer.SSLCProductInitializer;
@@ -32,7 +39,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class TicketDetailActivity extends BaseActivity implements SSLCTransactionResponseListener {
 
@@ -112,10 +121,68 @@ public class TicketDetailActivity extends BaseActivity implements SSLCTransactio
 
     @Override
     public void transactionSuccess(SSLCTransactionInfoModel sslcTransactionInfoModel) {
-    binding.downloadTicketBtn.setVisibility(View.VISIBLE);
-    binding.paymentBtn.setVisibility(View.GONE);
-    Toast.makeText(TicketDetailActivity.this,"Transaction success",Toast.LENGTH_SHORT).show();
+        binding.downloadTicketBtn.setVisibility(View.VISIBLE);
+        binding.paymentBtn.setVisibility(View.GONE);
+        Toast.makeText(TicketDetailActivity.this, "Transaction success", Toast.LENGTH_SHORT).show();
+
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("BookedSeats");
+        String busName = trip.getBusCompanyName();
+        String travelDate = trip.getDate();
+        String passengerSeats = trip.getPassenger(); // Comma-separated seat numbers, e.g., "1A,2B,3C"
+        String busVariation = busName + " " + trip.getClassSeat();
+        int id= trip.getID();
+        String busID=String.valueOf(id);
+
+
+        if (busName != null && travelDate != null && passengerSeats != null) {
+            // Split the passenger seats into an array
+            String[] seats = passengerSeats.split(",");
+
+            // Create a map for batch update
+            Map<String, Object> updates = new HashMap<>();
+            for (String seat : seats) {
+                updates.put(seat.trim(), true);
+            }
+
+            // Perform the batch update
+            databaseReference.child(busID).child(travelDate).updateChildren(updates)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(TicketDetailActivity.this, "Seats reserved successfully", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(TicketDetailActivity.this, "Failed to reserve seats", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            Toast.makeText(TicketDetailActivity.this, "Invalid trip data.", Toast.LENGTH_SHORT).show();
+        }
+
+        FirebaseFirestore firestore=FirebaseFirestore.getInstance();
+        FirebaseUser currentUser=FirebaseAuth.getInstance().getCurrentUser();
+        if(currentUser!=null){
+            String uid=currentUser.getUid();
+            Map<String,Object> ticketData=new HashMap<>();
+            ticketData.put("from",trip.getFrom());
+            ticketData.put("to",trip.getTo());
+            ticketData.put("date",trip.getDate());
+            ticketData.put("departureTime",trip.getDepartureTime());
+            ticketData.put("travelTime",trip.getTravelTime());
+            ticketData.put("classSeat",trip.getClassSeat());
+            ticketData.put("price",trip.getPrice());
+            ticketData.put("busCompanyName",trip.getBusCompanyName());
+            ticketData.put("seats",trip.getPassenger());
+
+            firestore.collection("users").document(uid).collection("tickets")
+                    .add(ticketData)
+                    .addOnSuccessListener(documentReference ->
+                            Toast.makeText(TicketDetailActivity.this, "Ticket added successfully", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e->
+                            Toast.makeText(TicketDetailActivity.this, "Failed to add ticket", Toast.LENGTH_SHORT).show());
+
+
+        }
     }
+
 
     @Override
     public void transactionFail(String s) {
@@ -143,7 +210,7 @@ public class TicketDetailActivity extends BaseActivity implements SSLCTransactio
         binding.toTxt.setText(trip.getTo());
         binding.toShortTxt.setText(trip.getToShort());
         binding.toSmallTxt.setText(trip.getTo());
-        binding.dateTxt.setText(trip.getDate());
+        binding.dateTxt.setText(trip.getDate());  // date
         binding.timeTxt.setText(trip.getDepartureTime());
         binding.arrivalTxt.setText(trip.getTravelTime());
         binding.classTxt.setText(trip.getClassSeat());
@@ -153,6 +220,9 @@ public class TicketDetailActivity extends BaseActivity implements SSLCTransactio
         binding.seatsTxt.setText(trip.getPassenger());
         binding.nameTxt.setText("Name: "+username);
         binding.mailTxt.setText("E-mail: "+email);
+        binding.departureTxt.setText(trip.getStart());
+        binding.endingTxt.setText(trip.getEnd());
+        binding.idTxt.setText(String.valueOf(trip.getID()));
         if(trip.getBusCompanyName().equals("Ena Bus")){
             binding.logo.setImageResource(R.drawable.ena_bus);
         }

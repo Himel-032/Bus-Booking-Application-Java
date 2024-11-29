@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 public class Trip implements Serializable {
   //  private String busCompanyLogo;
+    private int ID;
     private String busCompanyName;
     private String classSeat;
     private String date;
@@ -17,7 +18,26 @@ public class Trip implements Serializable {
     private String arriveTime;
 
     private int totalSeats;
+
+    public String getStart() {
+        return start;
+    }
+
+    public void setStart(String start) {
+        this.start = start;
+    }
+
+    public String getEnd() {
+        return end;
+    }
+
+    public void setEnd(String end) {
+        this.end = end;
+    }
+
     private String travelTime;
+    private String start;
+    private String end;
 
 
 
@@ -40,7 +60,8 @@ public class Trip implements Serializable {
         this.busCompanyLogo = busCompanyLogo;
     }
     */
-
+    public int getID(){ return ID; }
+    public void setID(int ID){ this.ID = ID; }
 
     public String getBusCompanyName() {
         return busCompanyName;
