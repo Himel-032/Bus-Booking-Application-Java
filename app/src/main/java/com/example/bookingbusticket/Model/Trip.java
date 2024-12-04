@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Trip implements Serializable {
   //  private String busCompanyLogo;
     private int ID;
+    private String passenger;
     private String busCompanyName;
     private String classSeat;
     private String date;
@@ -171,7 +172,7 @@ public class Trip implements Serializable {
     public void setTravelTime(String travelTime) {
         this.travelTime = travelTime;
     }
-    private String passenger;
+
     public String getPassenger()
     {
         return  passenger;

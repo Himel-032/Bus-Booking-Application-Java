@@ -176,7 +176,7 @@
         android:id="@+id/idText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="05dp"
         android:text="TextView"
         android:textColor="@color/black"
         android:textStyle="bold"
@@ -200,7 +200,7 @@
         android:id="@+id/depurturePlaceTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="05dp"
         android:text="-"
         android:textColor="@color/black"
         android:textSize="15sp"
@@ -214,7 +214,7 @@
         android:id="@+id/textView33"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="50dp"
+        android:layout_marginStart="10dp"
         android:text="Ending:"
         android:textColor="@color/black"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -225,7 +225,7 @@
         android:id="@+id/endingPlaceTxt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="05dp"
         android:text="-"
         android:textStyle="bold"
         android:textColor="@color/black"
@@ -233,5 +233,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView33"
         app:layout_constraintTop_toTopOf="@+id/textView33" />
+
+    <TextView
+        android:id="@+id/seatsTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="seats"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView12" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -33,7 +33,9 @@ android {
 }
 
 dependencies {
-
+    implementation("com.airbnb.android:lottie:5.0.3")
+    implementation("com.android.volley:volley:1.2.1")
+    implementation("androidx.cardview:cardview:1.0.0")
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -41,6 +43,8 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    implementation(libs.firebase.messaging)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)

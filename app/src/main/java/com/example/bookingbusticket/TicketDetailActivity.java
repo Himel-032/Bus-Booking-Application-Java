@@ -170,7 +170,13 @@ public class TicketDetailActivity extends BaseActivity implements SSLCTransactio
             ticketData.put("classSeat",trip.getClassSeat());
             ticketData.put("price",trip.getPrice());
             ticketData.put("busCompanyName",trip.getBusCompanyName());
-            ticketData.put("seats",trip.getPassenger());
+            ticketData.put("passenger",trip.getPassenger());
+            ticketData.put("start",trip.getStart());
+            ticketData.put("end",trip.getEnd());
+            ticketData.put("ID",trip.getID());
+            ticketData.put("fromShort",trip.getFromShort());
+            ticketData.put("toShort",trip.getToShort());
+
 
             firestore.collection("users").document(uid).collection("tickets")
                     .add(ticketData)

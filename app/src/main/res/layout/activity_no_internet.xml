@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NoInternetActivity">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+
+        app:cardCornerRadius="10dp"
+        app:cardUseCompatPadding="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:gravity="center">
+
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/no_internet_connection"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+
+                app:lottie_rawRes="@raw/no_internet_connection" />
+
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/retry_button"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:background="@drawable/round_back_stroke"
+                android:text="RETRY"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_gravity="center" />
+
+
+            <TextView
+                android:id="@+id/no_internet_connection_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="No Internet Connection"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_gravity="center" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

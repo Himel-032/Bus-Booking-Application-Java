@@ -434,7 +434,7 @@
                 android:textStyle="bold"
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
-                android:layout_marginBottom="24dp"
+
                 android:textColor="@color/white"
                 style="@android:style/Widget.Button"
                 android:background="@drawable/blue_bg"

@@ -3,30 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:background="@color/grey"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".IntroActivity">
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="510dp"
-        android:layout_height="755dp"
+        android:layout_width="409dp"
+        android:layout_height="693dp"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/bus_intro_pic" />
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.345"
+        app:srcCompat="@drawable/intro_pic" />
 
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/travelbd"
-        android:textColor="@color/blue"
-        android:textSize="44sp"
+        android:layout_marginTop="25dp"
+        android:text="Book your bus ticket easily. And travel the whole Bangladesh ..."
+        android:textColor="@color/visaColorCode"
+        android:textSize="25sp"
         android:textStyle="bold"
+        android:gravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -41,29 +45,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/intro_title"
-            android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="31sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/intro_subtitle"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginTop="24dp"
-            android:layout_marginBottom="24dp"
-            android:textSize="20sp"
-            android:textAlignment="center"
-            />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/startBtn"
@@ -86,8 +67,9 @@
             android:layout_marginEnd="24dp"
             android:layout_marginTop="24dp"
             android:layout_marginBottom="8dp"
-            android:background="@drawable/stroke_bg"
+           android:background="@drawable/stroke_bg"
             style="@android:style/Widget.Button"
+
             android:text="I have an account"
             android:textSize="18sp"
             android:textStyle="bold"

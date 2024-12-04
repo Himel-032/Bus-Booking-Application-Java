@@ -32,9 +32,10 @@
                     android:id="@+id/imageView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="4dp"
                     android:layout_marginEnd="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/world" />
@@ -43,8 +44,8 @@
                     android:id="@+id/imageView3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="48dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="70dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:srcCompat="@drawable/men" />
@@ -61,14 +62,19 @@
                     app:layout_constraintStart_toEndOf="@+id/imageView3"
                     app:layout_constraintTop_toTopOf="@+id/imageView3" />
 
+
                 <ImageView
-                    android:id="@+id/imageView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+
+                    android:id="@+id/notificationsImg"
+                    android:layout_width="40dp"
+                    android:layout_height="42dp"
+                    android:layout_marginTop="-35dp"
                     android:layout_marginEnd="24dp"
                     app:layout_constraintBottom_toBottomOf="@+id/imageView3"
+
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/imageView3"
+                    app:layout_constraintVertical_bias="0.0"
                     app:srcCompat="@drawable/bell_icon" />
 
                 <TextView
@@ -77,11 +83,23 @@
                     android:layout_height="wrap_content"
                     android:text="Let's explore the world\n with us!!!"
                     android:textColor="@color/white"
-                    android:textSize="25sp"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/imageView3"
                     app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+
+                <ImageView
+                    android:id="@+id/weatherImg"
+                    android:layout_width="45dp"
+                    android:layout_height="42dp"
+                    android:layout_marginEnd="8dp"
+                    android:elevation="10dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/notificationsImg"
+                    app:layout_constraintEnd_toStartOf="@+id/notificationsImg"
+                    app:layout_constraintTop_toTopOf="@+id/notificationsImg"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:srcCompat="@drawable/icon_weather" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
@@ -125,7 +143,6 @@
                         android:textSize="20dp"
                         android:textStyle="bold"
                         android:textColor="@color/black"
-                        android:background="@color/white"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@id/imageView5"
@@ -309,7 +326,7 @@
         android:padding="4dp"
         app:cnb_iconColor="@color/blue"
         app:cnb_iconSize="20sp"
-        android:layout_marginBottom="35dp"
+        android:layout_marginBottom="0dp"
         app:cnb_menuResource="@menu/menu_bottom"
         app:cnb_orientationMode="horizontal"
         app:cnb_radius="50dp"
