@@ -3,6 +3,7 @@ package com.example.bookingbusticket;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,29 +35,33 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        // Initialize UI elements
         userMail = view.findViewById(R.id.userMailTxt);
         userName = view.findViewById(R.id.userTxt);
         Button logoutButton = view.findViewById(R.id.logOutBtn);
         Button deleteButton = view.findViewById(R.id.deleteBtn);
 
+        // Initialize FirebaseAuth and Firestore
         firestore = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
 
+        // Get current user details
         FirebaseUser user = auth.getCurrentUser();
         if (user != null) {
             String mail = user.getEmail();
-            String userDetails = "Email: " + user.getEmail();
+            String userDetails = "Email: " + mail;
             userMail.setText(userDetails);
-            String name = mail.split("@")[0];
+            String name = mail.split("@")[0];  // Get name from email
             userName.setText("User Name: " + name);
         } else {
             userMail.setText("No user logged in");
+            userName.setText("Guest");
         }
 
         // Handle Logout Button Click
         logoutButton.setOnClickListener(v -> {
             auth.signOut();
-            Intent intent = new Intent(getActivity(), EmailSignIn.class);
+            Intent intent = new Intent(requireActivity(), EmailSignIn.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         });
@@ -67,21 +72,21 @@ public class ProfileFragment extends Fragment {
 
             if (userToDelete != null) {
                 // Step 1: Ask the user for their password to confirm
-                EditText passwordEditText = new EditText(getActivity());
+                EditText passwordEditText = new EditText(requireActivity());
                 passwordEditText.setHint("Enter your password");
                 passwordEditText.setTransformationMethod(android.text.method.PasswordTransformationMethod.getInstance());
 
-                new AlertDialog.Builder(getActivity())
+                new AlertDialog.Builder(requireActivity())
                         .setTitle("Confirm Password")
-                        .setMessage("You will loose all the previous booking history.Please enter your password to delete your account.")
+                        .setMessage("You will lose all the previous booking history. Please enter your password to delete your account.")
                         .setView(passwordEditText)
                         .setPositiveButton("Confirm", (dialog, which) -> {
-                            String password = passwordEditText.getText().toString();
+                            String password = passwordEditText.getText().toString().trim();
                             if (!password.isEmpty()) {
                                 // Step 2: Reauthenticate the user with their password
                                 reauthenticateAndDelete(userToDelete, password);
                             } else {
-                                Toast.makeText(getActivity(), "Password cannot be empty", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(requireActivity(), "Password cannot be empty", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
@@ -106,17 +111,30 @@ public class ProfileFragment extends Fragment {
                                 .addOnCompleteListener(deleteTask -> {
                                     if (deleteTask.isSuccessful()) {
                                         // After account deletion, sign out and redirect to login
-                                        auth.signOut();
-                                        Intent intent = new Intent(getActivity(), EmailSignIn.class);
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(intent);
+                                        if (isAdded()) {  // Check if fragment is attached
+                                            auth.signOut();
+                                            Intent intent = new Intent(requireActivity(), EmailSignIn.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+                                        }
                                     } else {
-                                        Toast.makeText(getActivity(), "Failed to delete user account", Toast.LENGTH_SHORT).show();
+                                        if (isAdded()) {
+                                            Log.e("DeleteAccountError", "Error deleting user account: " + deleteTask.getException());
+                                            Toast.makeText(requireActivity(), "Failed to delete user account", Toast.LENGTH_SHORT).show();
+                                        }
                                     }
                                 })
-                                .addOnFailureListener(e -> Toast.makeText(getActivity(), "Failed to delete user", Toast.LENGTH_SHORT).show());
+                                .addOnFailureListener(e -> {
+                                    if (isAdded()) {
+                                        Log.e("DeleteAccountError", "Error deleting user: " + e.getMessage());
+                                        Toast.makeText(requireActivity(), "Failed to delete user", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                     } else {
-                        Toast.makeText(getActivity(), "Authentication failed, please try again", Toast.LENGTH_SHORT).show();
+                        if (isAdded()) {
+                            Log.e("ReauthenticationError", "Authentication failed: " + task.getException());
+                            Toast.makeText(requireActivity(), "Authentication failed, please try again", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
     }
@@ -131,37 +149,55 @@ public class ProfileFragment extends Fragment {
         firestore.collection("users").document(uid).collection("tickets")
                 .get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        if (task.getResult().isEmpty()) {
-                            // No tickets to delete, just commit the batch
-                            batch.commit()
-                                    .addOnSuccessListener(aVoid -> {
-                                        Toast.makeText(getActivity(), "User data deleted successfully", Toast.LENGTH_SHORT).show();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(getActivity(), "Failed to delete user data", Toast.LENGTH_SHORT).show();
-                                    });
-                        } else {
-                            for (DocumentSnapshot snapshot : task.getResult()) {
-                                // Delete each ticket document
-                                batch.delete(snapshot.getReference());
-                            }
+                    if (isAdded()) {  // Ensure the fragment is still attached
+                        if (task.isSuccessful()) {
+                            if (task.getResult().isEmpty()) {
+                                // No tickets to delete, just commit the batch
+                                batch.commit()
+                                        .addOnSuccessListener(aVoid -> {
+                                            if (isAdded()) {
+                                                Toast.makeText(requireActivity(), "User data deleted successfully", Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            if (isAdded()) {
+                                                Log.e("DeleteUserDataError", "Error deleting user data: " + e.getMessage());
+                                                Toast.makeText(requireActivity(), "Failed to delete user data", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            } else {
+                                for (DocumentSnapshot snapshot : task.getResult()) {
+                                    // Delete each ticket document
+                                    batch.delete(snapshot.getReference());
+                                }
 
-                            // Commit the batch after deleting all tickets
-                            batch.commit()
-                                    .addOnSuccessListener(aVoid -> {
-                                        Toast.makeText(getActivity(), "User data and tickets deleted successfully", Toast.LENGTH_SHORT).show();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Toast.makeText(getActivity(), "Failed to delete user data", Toast.LENGTH_SHORT).show();
-                                    });
+                                // Commit the batch after deleting all tickets
+                                batch.commit()
+                                        .addOnSuccessListener(aVoid -> {
+                                            if (isAdded()) {
+                                                Toast.makeText(requireActivity(), "User data and tickets deleted successfully", Toast.LENGTH_SHORT).show();
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            if (isAdded()) {
+                                                Log.e("DeleteTicketsError", "Error deleting tickets: " + e.getMessage());
+                                                Toast.makeText(requireActivity(), "Failed to delete tickets", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            }
+                        } else {
+                            if (isAdded()) {
+                                Log.e("FirestoreError", "Error retrieving tickets: " + task.getException());
+                                Toast.makeText(requireActivity(), "Error retrieving tickets", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    } else {
-                        Toast.makeText(getActivity(), "Error deleting tickets: " + task.getException(), Toast.LENGTH_SHORT).show();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(getActivity(), "Error retrieving tickets: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    if (isAdded()) {
+                        Log.e("FirestoreError", "Error retrieving tickets: " + e.getMessage());
+                        Toast.makeText(requireActivity(), "Error retrieving tickets: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 });
     }
 

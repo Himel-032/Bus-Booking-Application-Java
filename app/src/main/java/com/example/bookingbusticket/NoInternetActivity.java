@@ -10,6 +10,8 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class NoInternetActivity extends AppCompatActivity {
 
@@ -31,7 +33,17 @@ public class NoInternetActivity extends AppCompatActivity {
         retryButton.setOnClickListener(v -> {
             if (isInternetAvailable()) {
 
-                startActivity(new Intent(NoInternetActivity.this, MainActivity.class));
+               // startActivity(new Intent(NoInternetActivity.this, MainActivity.class));
+            //    finish();
+
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                if (user != null && isInternetAvailable()) {
+                    startActivity(new Intent(NoInternetActivity.this, MainActivity.class));
+
+                } else if(user==null && isInternetAvailable()) {
+                    startActivity(new Intent(NoInternetActivity.this, IntroActivity.class));
+
+                }
                 finish();
             } else {
 
@@ -41,8 +53,18 @@ public class NoInternetActivity extends AppCompatActivity {
 
 
         if (isInternetAvailable()) {
-            startActivity(new Intent(NoInternetActivity.this, MainActivity.class));
+          //  startActivity(new Intent(NoInternetActivity.this, MainActivity.class));
+         //   finish();
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user != null && isInternetAvailable()) {
+                startActivity(new Intent(NoInternetActivity.this, MainActivity.class));
+
+            } else if(user==null && isInternetAvailable()) {
+                startActivity(new Intent(NoInternetActivity.this, IntroActivity.class));
+
+            }
             finish();
+
         }
     }
 
