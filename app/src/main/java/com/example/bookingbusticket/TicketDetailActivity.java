@@ -2,22 +2,17 @@ package com.example.bookingbusticket;
 
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-
 import android.graphics.Canvas;
 import android.graphics.pdf.PdfDocument;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.bookingbusticket.Model.Trip;
 import com.example.bookingbusticket.databinding.ActivityTicketDetailBinding;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -51,6 +46,7 @@ public class TicketDetailActivity extends BaseActivity implements SSLCTransactio
     private int amount;
 
     private  String email,username;
+    ImageView paidImag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +67,7 @@ public class TicketDetailActivity extends BaseActivity implements SSLCTransactio
         Button downloadButton = findViewById(R.id.downloadTicketBtn);// chatpt
         View ticketView = findViewById(R.id.ticketLayout); // Replace with the ID of your ticket view
         Button paymentButton = findViewById(R.id.paymentBtn);
+        paidImag=findViewById(R.id.paidIcon);
 
 
 
@@ -121,6 +118,7 @@ public class TicketDetailActivity extends BaseActivity implements SSLCTransactio
 
     @Override
     public void transactionSuccess(SSLCTransactionInfoModel sslcTransactionInfoModel) {
+        paidImag.setVisibility(View.VISIBLE);
         binding.downloadTicketBtn.setVisibility(View.VISIBLE);
         binding.paymentBtn.setVisibility(View.GONE);
         Toast.makeText(TicketDetailActivity.this, "Transaction success", Toast.LENGTH_SHORT).show();

@@ -30,9 +30,13 @@ android {
     buildFeatures{
         viewBinding = true
     }
+
 }
 
 dependencies {
+    implementation("org.osmdroid:osmdroid-android:6.1.13")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("com.squareup.picasso:picasso:2.8")
     implementation("com.airbnb.android:lottie:5.0.3")
     implementation("com.android.volley:volley:1.2.1")
     implementation("androidx.cardview:cardview:1.0.0")

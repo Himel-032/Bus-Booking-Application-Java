@@ -5,17 +5,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.example.bookingbusticket.Adapter.TripAdapter;
 import com.example.bookingbusticket.Model.Trip;
-import com.example.bookingbusticket.databinding.ActivityIntroBinding;
 import com.example.bookingbusticket.databinding.ActivitySearchBinding;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -25,9 +19,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 public class SearchActivity extends BaseActivity {
     private ActivitySearchBinding binding;
@@ -51,7 +43,7 @@ public class SearchActivity extends BaseActivity {
             finish();
         });
     }
-
+/*
     private void initList() {
 
         DatabaseReference myRef=database.getReference("Buses");
@@ -103,9 +95,9 @@ public class SearchActivity extends BaseActivity {
                             list.add(trip);
                         }
                         // To filter with date ,uncomment below lines and comment to line
-                       /* if (trip.getTo().equals(to) && trip.getDate().equals(date)) {
-                            list.add(trip);
-                        }*/
+                       // if (trip.getTo().equals(to) && trip.getDate().equals(date)) {
+                        //    list.add(trip);
+                       // }
                         } catch (Exception e) {
                             Log.e("SearchActivity", "Error parsing trip: " + e.getMessage());
                         }
@@ -129,6 +121,84 @@ public class SearchActivity extends BaseActivity {
             }
         });
     }
+
+
+*/
+
+    private void initList() {
+        DatabaseReference myRef = database.getReference("Buses");
+        ArrayList<Trip> list = new ArrayList<>();
+
+        Log.d("SearchActivity", "Querying buses from Firebase...");
+
+        Query query = myRef.orderByChild("from").equalTo(from);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    for (DataSnapshot issue : snapshot.getChildren()) {
+                        try {
+                            Trip trip = issue.getValue(Trip.class);
+
+                            if (trip != null) {
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM, yyyy");
+                                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+
+                                // Parse the trip's departure date and time.
+                                trip.setDate(date);
+                                Date tripDate = dateFormat.parse(trip.getDate());
+                                Date tripTime = timeFormat.parse(trip.getDepartureTime());
+
+                                // Get the current date and time.
+                                Date currentDate = new Date();
+                                String currentDateString = dateFormat.format(currentDate);
+                                String currentTimeString = timeFormat.format(currentDate);
+
+                                Date truncatedCurrentDate = dateFormat.parse(currentDateString);
+                                Date currentTime = timeFormat.parse(currentTimeString);
+
+                                // Check if the trip is valid:
+                                boolean isFutureTrip = false;
+
+                                if (tripDate.after(truncatedCurrentDate)) {
+                                    // Future date
+                                    isFutureTrip = true;
+                                } else if (tripDate.equals(truncatedCurrentDate)) {
+                                    // Today: Ensure the departure time is in the future
+                                    isFutureTrip = tripTime.after(currentTime);
+                                }
+
+                                if (isFutureTrip && trip.getTo().equals(to) && trip.getClassSeat().equals(classType)) {
+                                    list.add(trip);
+                                }
+                            }
+
+                        } catch (Exception e) {
+                            Log.e("SearchActivity", "Error parsing trip: " + e.getMessage());
+                        }
+                    }
+
+                    if (!list.isEmpty()) {
+                        binding.searchView.setLayoutManager(new LinearLayoutManager(SearchActivity.this, LinearLayoutManager.VERTICAL, false));
+                        binding.searchView.setAdapter(new TripAdapter(list));
+                    } else {
+                        Toast.makeText(SearchActivity.this, "No trips found.", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(SearchActivity.this, "No trips found for this location.", Toast.LENGTH_SHORT).show();
+                }
+                binding.progressBarSearch.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("SearchActivity", "Firebase query cancelled: " + error.getMessage());
+            }
+        });
+    }
+
+
+
 
     private void getIntentExtra() {
         from = getIntent().getStringExtra("from");

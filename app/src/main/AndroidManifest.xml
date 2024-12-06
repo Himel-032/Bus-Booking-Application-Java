@@ -66,6 +66,13 @@
             android:name=".MainActivity"
             android:exported="false"
             android:theme="@style/Theme.BookingBusTicket" />
+
+        <meta-data
+            android:name="osmdroid.basePath"
+            android:value="osmdroid" />
+        <meta-data
+            android:name="osmdroid.cachePath"
+            android:value="osmdroid/cache"/>
     </application>
 
 </manifest>

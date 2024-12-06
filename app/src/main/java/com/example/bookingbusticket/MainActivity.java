@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -38,6 +37,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.WriteBatch;
@@ -52,6 +52,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
+    PopupWindow  flyerPopup;
+
     FirebaseAuth auth;
     FirebaseFirestore firestore;
     private static final String PREFS_NAME = "AppPrefs";
@@ -77,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
     ImageView weather;
 
 
+
+
     @Override
     protected void onStart() {
         super.onStart();
@@ -94,6 +98,24 @@ public class MainActivity extends AppCompatActivity {
         // Call method to remove past dates from the database (if needed)
         deletePastDates();
     }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Dismiss the popup if it is showing
+        if (flyerPopup != null && flyerPopup.isShowing()) {
+            flyerPopup.dismiss();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Dismiss the popup if it is showing
+        if (flyerPopup != null && flyerPopup.isShowing()) {
+            flyerPopup.dismiss();
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,6 +136,8 @@ public class MainActivity extends AppCompatActivity {
         weather = findViewById(R.id.weatherImg);
 
         showFlyerBtn=findViewById(R.id.menuImg);
+
+
         showFlyerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,51 +153,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Create notification channel
-       // createNotificationChannel();
-/*
-        // Set up Firebase listener for new buses added
-        FirebaseDatabase.getInstance().getReference("Buses")
-                .addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot snapshot, String previousChildName) {
-                        long currentTime = System.currentTimeMillis();
 
-                        // Only show notifications for buses added after the last notification timestamp
-                        if (currentTime >= appLaunchTime && currentTime > lastNotificationTimestamp) {
-                            String busName = snapshot.child("busCompanyName").getValue(String.class);
-                            String route = snapshot.child("from").getValue(String.class) + " to " +
-                                    snapshot.child("to").getValue(String.class);
-
-                            String message = "New Bus: " + busName + " (" + route + ")";
-                            notifications.add(message); // Save notification for later display
-
-                            // Change the notification icon's background to indicate a new notification
-                            notificationsImg.setImageResource(R.drawable.bell_icon); // Update to an active icon
-
-                            showNotification("New Bus Added", message);
-
-                            // Update the last notification timestamp in SharedPreferences
-                            SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferences.edit();
-                            editor.putLong(LAST_NOTIFICATION_TIMESTAMP_KEY, currentTime);
-                            editor.apply();
-                        }
-                    }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot snapshot, String previousChildName) {}
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {}
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot snapshot, String previousChildName) {}
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {}
-                });
-*/
 
         // When the notification icon is clicked, show the notifications
         notificationsImg.setOnClickListener(view -> {
@@ -229,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
         // Handle bottom navigation
         navigationView.setOnItemSelectedListener(i -> {
             if (i == R.id.profile) {
-                loadFragment(new ProfileFragment());
+                loadFragment(new RouteFragment());
             } else if (i == R.id.home) {
                 findViewById(R.id.scrollView2).setVisibility(View.VISIBLE);
                 findViewById(R.id.fragmentContainer).setVisibility(View.GONE);
@@ -238,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
 
 
 
@@ -251,7 +232,7 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
-    ///////////
+
     private void openDatePicker(final TextView dateTextView) {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
@@ -312,32 +293,7 @@ public class MainActivity extends AppCompatActivity {
               return false;
             }
         }
-/*
-        private void createNotificationChannel() {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                String name = "Buses Notifications";
-                String description = "Notifications for new buses added";
-                int importance = NotificationManager.IMPORTANCE_DEFAULT;
-                NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-                channel.setDescription(description);
 
-                NotificationManager notificationManager = getSystemService(NotificationManager.class);
-                notificationManager.createNotificationChannel(channel);
-            }
-        }
-
-        private void showNotification(String title, String message) {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setSmallIcon(R.drawable.bell_icon) // Replace with your app's icon
-                    .setContentTitle(title)
-                    .setContentText(message)
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            notificationManager.notify((int) System.currentTimeMillis(), builder.build());
-        }
-
- */
     private void showUpcomingTripsDialog() {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -431,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // Create PopupWindow for the flyer
-        PopupWindow flyerPopup = new PopupWindow(flyerView, flyerWidth, flyerHeight);
+          flyerPopup = new PopupWindow(flyerView, flyerWidth, flyerHeight);
 
         // Start slide-in animation for the flyer
         Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in_from_left);
@@ -455,6 +411,7 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
+
 
 
 
@@ -496,6 +453,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Handle Delete Account Button Click
        deleteButton.setOnClickListener(v -> {
+           FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
             FirebaseUser userToDelete = auth.getCurrentUser();
 
             if (userToDelete != null) {
@@ -530,9 +489,15 @@ public class MainActivity extends AppCompatActivity {
         user.reauthenticate(credential)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
-                        String uid=FirebaseAuth.getInstance().getCurrentUser().getUid();
+                      //  String uid=FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                        if (currentUser == null) {
+                            Toast.makeText(this, "User not authenticated.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        String uid = currentUser.getUid();
                         // Step 3: Delete the user's data from Firestore
-                        deleteUserDataFromFirestore(uid);
+                       // deleteUserData(uid);
 
                         // Step 4: Delete the user account after successful data deletion
                         user.delete()
@@ -554,40 +519,51 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void deleteUserDataFromFirestore(String userId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        WriteBatch batch = db.batch();
+    private void deleteUserData(String uid) {
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DocumentReference userDocRef = firestore.collection("users").document(uid);
 
-        // Delete main user document
-        batch.delete(db.collection("users").document(userId));
-
-        // Delete all documents in "tickets" subcollection
-        db.collection("users").document(userId).collection("tickets")
-                .get()
+        // Step 1: Delete tickets subcollection
+        userDocRef.collection("tickets").get()
                 .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        for (DocumentSnapshot ticket : task.getResult()) {
-                            batch.delete(ticket.getReference());
+                    if (task.isSuccessful() && !task.getResult().isEmpty()) {
+                        WriteBatch batch = firestore.batch();
+
+                        // Queue deletion of all ticket documents
+                        for (DocumentSnapshot ticketDoc : task.getResult()) {
+                            batch.delete(ticketDoc.getReference());
                         }
 
-                        // Commit the batch
+                        // Commit batch deletion
                         batch.commit()
-                                .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(getApplicationContext(), "User and all tickets deleted successfully", Toast.LENGTH_SHORT).show();
-                                })
-                                .addOnFailureListener(e -> {
-                                    Log.e("FirestoreDelete", "Batch commit failed: " + e.getMessage());
-                                    Toast.makeText(getApplicationContext(), "Failed to delete user data", Toast.LENGTH_SHORT).show();
+                                .addOnCompleteListener(batchTask -> {
+                                    if (batchTask.isSuccessful()) {
+                                        // Step 2: Delete the main user document
+                                        deleteMainUserDocument(userDocRef);
+                                    } else {
+                                        Toast.makeText(this, "Failed to delete tickets: " + batchTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
                                 });
+                    } else if (task.getResult().isEmpty()) {
+                        // No tickets to delete
+                        deleteMainUserDocument(userDocRef);
                     } else {
-                        Log.e("FirestoreDelete", "Failed to retrieve tickets: " + task.getException());
-                        Toast.makeText(getApplicationContext(), "Error retrieving tickets", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Failed to retrieve tickets: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 })
-                .addOnFailureListener(e -> {
-                    Log.e("FirestoreDelete", "Error accessing tickets: " + e.getMessage());
-                    Toast.makeText(getApplicationContext(), "Error accessing tickets", Toast.LENGTH_SHORT).show();
-                });
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Error accessing tickets: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
+    }
+
+    private void deleteMainUserDocument(DocumentReference userDocRef) {
+        userDocRef.delete()
+                .addOnSuccessListener(aVoid ->
+                        Toast.makeText(this, "User data deleted successfully.", Toast.LENGTH_SHORT).show()
+                )
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Failed to delete user document: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
     }
 
 
