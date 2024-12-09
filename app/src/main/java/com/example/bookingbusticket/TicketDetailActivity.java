@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.bookingbusticket.Model.EmailSenderTask;
 import com.example.bookingbusticket.Model.Trip;
 import com.example.bookingbusticket.databinding.ActivityTicketDetailBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -185,6 +186,16 @@ public class TicketDetailActivity extends BaseActivity implements SSLCTransactio
 
 
         }
+        String emailBody="Bus Name: "+trip.getBusCompanyName()+"\nDeparture Date: "+trip.getDate()+"\nDeparture Time: "+trip.getDepartureTime()+"\nClass: "+trip.getClassSeat()+"\nSeats: "+trip.getPassenger()+"\nFrom: "+trip.getFrom()+
+                "\nTo: "+trip.getTo()+"\nStarting: "+trip.getStart()+"\nEnding:"+trip.getEnd()+"\n\nThank you for choosing our service.";
+        String recipientEmail=email;
+
+        String senderEmail = "";   // Your email
+        String appPassword = "";       // App password
+        // Recipient email
+
+
+        new EmailSenderTask(senderEmail, appPassword, recipientEmail, emailBody).execute();
     }
 
 

@@ -1,16 +1,16 @@
 package com.example.bookingbusticket;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.example.bookingbusticket.Adapter.BookmarkAdapter;
 import com.example.bookingbusticket.Model.Trip;
@@ -29,6 +29,7 @@ public class BookmarkFragment extends Fragment {
     private BookmarkAdapter adapter;
     private ArrayList<Trip> tripList;
     private FirebaseFirestore firestore;
+    ProgressBar progressBar;
 
     @Nullable
     @Override
@@ -36,6 +37,7 @@ public class BookmarkFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_bookmark, container, false);
 
         recyclerView = view.findViewById(R.id.historyView);
+        progressBar=view.findViewById(R.id.progressBarBookmark);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         tripList = new ArrayList<>();
@@ -65,9 +67,12 @@ public class BookmarkFragment extends Fragment {
                         }
                         adapter.notifyDataSetChanged();  // Notify the adapter that the data has changed
                     }
+                    progressBar.setVisibility(View.GONE);
                 })
                 .addOnFailureListener(e -> {
                     // Handle any errors here
                 });
+
+
     }
 }

@@ -49,7 +49,7 @@ public class WeatherActivity extends AppCompatActivity {
         conditionTextView = findViewById(R.id.condition);
         windSpeedTextView = findViewById(R.id.windSpeed);
         windDirectionTextView = findViewById(R.id.windDirection);
-        cloudinessTextView = findViewById(R.id.cloudiness);
+        cloudinessTextView = findViewById(R.id.cloudness);
         sunriseTextView = findViewById(R.id.sunrise);
         sunsetTextView = findViewById(R.id.sunset);
         back = findViewById(R.id.buttonBack);

@@ -74,108 +74,274 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                >
 
                 <!-- Individual TextViews for weather data -->
-                <TextView
-                    android:id="@+id/cityName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="City: Loading..."
-                    android:textSize="18sp"
-                   android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:lineSpacingExtra="4dp" />
 
-                <TextView
-                    android:id="@+id/temperature"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Temperature: Loading..."
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:lineSpacingExtra="4dp" />
 
-                <TextView
-                    android:id="@+id/humidity"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Humidity: Loading..."
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:lineSpacingExtra="4dp" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/pressure"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Pressure: Loading..."
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:lineSpacingExtra="4dp" />
+                    <ImageView
 
-                <TextView
-                    android:id="@+id/condition"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Condition: Loading..."
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:lineSpacingExtra="4dp" />
+                        android:layout_width="1dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.5"
 
-                <TextView
-                    android:id="@+id/windSpeed"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Wind Speed: Loading..."
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:lineSpacingExtra="4dp" />
+                        app:srcCompat="@drawable/city_location" />
 
-                <TextView
-                    android:id="@+id/windDirection"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Wind Direction: Loading..."
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:lineSpacingExtra="4dp" />
+                    <TextView
+                        android:id="@+id/cityName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
 
-                <TextView
-                    android:id="@+id/cloudiness"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Cloudiness: Loading..."
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:lineSpacingExtra="4dp" />
+                        android:layout_weight="0.5"
+                        android:gravity="start|center_vertical"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
 
-                <TextView
-                    android:id="@+id/sunrise"
+                        android:text="City: Loading..." />
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Sunrise: Loading..."
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:lineSpacingExtra="4dp" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/sunset"
+                    <ImageView
+
+                        android:layout_width="77dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.5"
+
+                        app:srcCompat="@drawable/temperature" />
+
+                    <TextView
+                        android:id="@+id/temperature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+
+                        android:layout_weight="0.5"
+                        android:gravity="start|center_vertical"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+
+                        android:text="Temperature: Loading..." />
+                </LinearLayout>
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Sunset: Loading..."
-                    android:textSize="18sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:lineSpacingExtra="4dp" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+
+                        android:layout_width="49dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.5"
+
+                        app:srcCompat="@drawable/humidity" />
+
+                    <TextView
+                        android:id="@+id/humidity"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+
+                        android:layout_weight="0.5"
+                        android:gravity="start|center_vertical"
+
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+
+                        android:text="Humidity: Loading..." />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+
+                        android:layout_width="51dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.5"
+
+                        app:srcCompat="@drawable/pressure" />
+
+                    <TextView
+                        android:id="@+id/pressure"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+
+                        android:layout_weight="0.5"
+                        android:gravity="start|center_vertical"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+
+                        android:text="Pressure: Loading..." />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+
+                        android:layout_width="56dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.5"
+
+                        app:srcCompat="@drawable/conditions" />
+
+                    <TextView
+                        android:id="@+id/condition"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+
+                        android:layout_weight="0.5"
+                        android:gravity="start|center_vertical"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+
+                        android:text="Condition: Loading..." />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+
+                        android:layout_width="72dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.5"
+
+                        app:srcCompat="@drawable/speed" />
+
+                    <TextView
+                        android:id="@+id/windSpeed"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+
+                        android:layout_weight="0.5"
+                        android:gravity="start|center_vertical"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+
+                        android:text="Wind Speed: Loading..." />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+
+                        android:layout_width="94dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.5"
+
+                        app:srcCompat="@drawable/wind_direction" />
+
+                    <TextView
+                        android:id="@+id/windDirection"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+
+                        android:layout_weight="0.5"
+                        android:gravity="start|center_vertical"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+
+                        android:text="Wind Direction: Loading..." />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+
+                        android:layout_width="56dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.5"
+
+                        app:srcCompat="@drawable/clouds" />
+
+                    <TextView
+                        android:id="@+id/cloudness"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+
+                        android:layout_weight="0.5"
+                        android:gravity="start|center_vertical"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+
+                        android:text="Cloudness: Loading..." />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+
+                        android:layout_width="39dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.5"
+
+                        app:srcCompat="@drawable/sunrise" />
+
+                    <TextView
+                        android:id="@+id/sunrise"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+
+                        android:layout_weight="0.5"
+
+                        android:gravity="start|center_vertical"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+
+                        android:text="Sunrise: Loading..." />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:id="@+id/imageView21"
+                        android:layout_width="34dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.5"
+
+                        app:srcCompat="@drawable/sunsets" />
+
+                    <TextView
+                        android:id="@+id/sunset"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+
+                        android:layout_weight="0.5"
+                        android:gravity="start|center_vertical"
+                        android:textColor="@color/black"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+
+                        android:text="Sunset: Loading..." />
+                </LinearLayout>
 
             </LinearLayout>
         </ScrollView>

@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -208,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Handle bottom navigation
         navigationView.setOnItemSelectedListener(i -> {
-            if (i == R.id.profile) {
+            if (i == R.id.map) {
                 loadFragment(new RouteFragment());
             } else if (i == R.id.home) {
                 findViewById(R.id.scrollView2).setVisibility(View.VISIBLE);
@@ -497,7 +498,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                         String uid = currentUser.getUid();
                         // Step 3: Delete the user's data from Firestore
-                       // deleteUserData(uid);
+                        deleteUserData(uid);
 
                         // Step 4: Delete the user account after successful data deletion
                         user.delete()
@@ -520,6 +521,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void deleteUserData(String uid) {
+        Log.d("DATAAAAAAAAAAAAAa", "Deleting user data for UID: " + uid);
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         DocumentReference userDocRef = firestore.collection("users").document(uid);
 
@@ -527,44 +529,45 @@ public class MainActivity extends AppCompatActivity {
         userDocRef.collection("tickets").get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful() && !task.getResult().isEmpty()) {
-                        WriteBatch batch = firestore.batch();
+                        Log.d("DATAAAAAAAAAAAAAa", "Found tickets, proceeding to delete.");
 
-                        // Queue deletion of all ticket documents
+                        WriteBatch batch = firestore.batch();
                         for (DocumentSnapshot ticketDoc : task.getResult()) {
+                            Log.d("DATAAAAAAAAAAAAAa", "Ticket to delete: " + ticketDoc.getReference().toString());
                             batch.delete(ticketDoc.getReference());
                         }
 
-                        // Commit batch deletion
                         batch.commit()
                                 .addOnCompleteListener(batchTask -> {
                                     if (batchTask.isSuccessful()) {
-                                        // Step 2: Delete the main user document
+                                        Log.d("DATAAAAAAAAAAAAAa", "Tickets deleted successfully.");
                                         deleteMainUserDocument(userDocRef);
                                     } else {
-                                        Toast.makeText(this, "Failed to delete tickets: " + batchTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        Log.d("DATAAAAAAAAAAAAAa", "Failed to delete tickets: " + batchTask.getException().getMessage());
                                     }
                                 });
                     } else if (task.getResult().isEmpty()) {
-                        // No tickets to delete
+                        Log.d("DATAAAAAAAAAAAAAa", "No tickets to delete.");
                         deleteMainUserDocument(userDocRef);
                     } else {
-                        Toast.makeText(this, "Failed to retrieve tickets: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.d("DATAAAAAAAAAAAAAa", "Failed to retrieve tickets: " + task.getException().getMessage());
                     }
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Error accessing tickets: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
+                .addOnFailureListener(e -> {
+                    Log.d("DATAAAAAAAAAAAAAa", "Error accessing tickets: " + e.getMessage());
+                });
     }
 
     private void deleteMainUserDocument(DocumentReference userDocRef) {
         userDocRef.delete()
-                .addOnSuccessListener(aVoid ->
-                        Toast.makeText(this, "User data deleted successfully.", Toast.LENGTH_SHORT).show()
-                )
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Failed to delete user document: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "User data deleted successfully.", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(this, "Failed to delete user document: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
+
 
 
 
